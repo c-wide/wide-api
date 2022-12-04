@@ -15,7 +15,11 @@ Note: All paths are prefixed with the name of the resource that registered it. (
 
 ### Register your own paths
 
-- This resource exposes one export: 'registerResourcePath(path: string, handler: (queryParams: Record<string, string>) => ApiResponse | void)'
+- This resource exposes one export:
+
+```
+    registerResourcePath(path: string, handler: (queryParams: Record<string, string>) => ApiResponse | void)
+```
 
 ### Resource restarter
 
@@ -24,9 +28,9 @@ Note: All paths are prefixed with the name of the resource that registered it. (
 - If using this path the resource will require the permission to use the "ensure", "start", and "stop" commands.
 
 ```
-add_ace resource.wide-api command.ensure allow
-add_ace resource.wide-api command.start allow
-add_ace resource.wide-api command.stop allow
+    add_ace resource.wide-api command.ensure allow
+    add_ace resource.wide-api command.start allow
+    add_ace resource.wide-api command.stop allow
 ```
 
 ### Handling resource restarts
