@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/config.schema.json",
+  "title": "Wide API Config",
+  "description": "Configuration options for Wide API",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "Schema validation",
+      "type": "string",
+      "default": "./config.schema.json"
+    },
+    "server": {
+      "description": "Config options for the API server",
+      "type": "object",
+      "properties": {
+        "port": {
+          "description": "Port for the API to listen on",
+          "type": "number",
+          "default": 4290
+        },
+        "accessKeys": {
+          "description": "Keys that are allowed to query the API (if none provided then keys are not used)",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "description": "Description for the API key",
+                "type": "string"
+              },
+              "key": {
+                "description": "The actual API key (usually a UUID)",
+                "type": "string"
+              }
+            },
+            "required": ["description", "key"]
+          }
+        }
+      },
+      "required": ["port", "accessKeys"]
+    },
+    "defaultPaths": {
+      "description": "Toggle default paths",
+      "type": "object",
+      "properties": {
+        "ensure-resource": {
+          "description": "Allows restarting resources via the API",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": ["ensure-resource"]
+    },
+    "logger": {
+      "description": "Logger options",
+      "type": "object",
+      "properties": {
+        "level": {
+          "description": "Define level for logging operations",
+          "type": "string",
+          "enum": ["debug", "info", "warn", "error"],
+          "default": "info"
+        }
+      },
+      "required": ["level"]
+    }
+  },
+  "required": ["$schema", "server", "defaultPaths", "logger"]
+}

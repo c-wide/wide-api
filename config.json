@@ -1,0 +1,13 @@
+{
+  "$schema": "./config.schema.json",
+  "server": {
+    "port": 4290,
+    "accessKeys": []
+  },
+  "defaultPaths": {
+    "ensure-resource": false
+  },
+  "logger": {
+    "level": "info"
+  }
+}
