@@ -44,3 +44,7 @@ add_ace resource.wide-api command.stop allow
 - If no access keys are provided, the server listens with unrestricted access.
 - If you do provide access keys then you must provide an access key in the 'x-api-key' header.
 - Access keys should be added in the format: { description: string, key: string }
+
+### Acknowledgements
+
+- [AvarianKnight](https://github.com/AvarianKnight) for the idea and rough draft.
