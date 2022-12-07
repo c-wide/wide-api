@@ -4,8 +4,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "tsup src/index.ts --target node16 --watch",
-    "build": "tsc -p src && tsup src/index.ts --target node16"
+    "dev": "node esbuild.config.js --watch",
+    "build": "tsc -p src && node esbuild.config.js"
   },
   "devDependencies": {
     "@citizenfx/client": "2.0.6086-1",
@@ -14,9 +14,10 @@
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
+    "colorette": "^2.0.19",
+    "esbuild": "^0.15.18",
     "eslint": "^8.28.0",
     "prettier": "^2.8.0",
-    "tsup": "^6.5.0",
     "typescript": "^4.9.3"
   },
   "dependencies": {
