@@ -35,5 +35,5 @@ jobs:
           repo_token: '${{ secrets.GITHUB_TOKEN }}'
           automatic_release_tag: 'latest'
           prerelease: false
-          title: 'Wide API Latest'
-          files: ./temp/wide-api.zip
+          title: 'Wide API - Latest'
+          files: wide-api.zip
