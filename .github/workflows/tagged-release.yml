@@ -28,7 +28,7 @@ jobs:
           mkdir -p ./temp/wide-api/dist
           cp ./{LICENSE,README.md,config.json,config.schema.json,fxmanifest.lua} ./temp/wide-api
           cp -r ./dist ./temp/wide-api/dist
-          zip -r wide-api.zip ./temp/wide-api
+          cd ./temp && zip -r ../wide-api.zip ./wide-api
       - name: Create Release
         uses: 'marvinpinto/action-automatic-releases@latest'
         with:
