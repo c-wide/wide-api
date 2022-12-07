@@ -2,7 +2,7 @@ fx_version("cerulean")
 
 game("gta5")
 
-version("0.0.0")
+version("v0.1.0")
 
 server_only("yes")
 
