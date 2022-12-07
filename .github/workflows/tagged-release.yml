@@ -60,5 +60,5 @@ jobs:
         with:
           repo_token: '${{ secrets.GITHUB_TOKEN }}'
           prerelease: false
-          title: Wide API - ${{ env.RELEASE_VERSION }}
+          title: ${{ env.RELEASE_VERSION }}
           files: wide-api.zip

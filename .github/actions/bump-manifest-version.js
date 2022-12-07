@@ -6,7 +6,7 @@ const manifestFile = fs.readFileSync('fxmanifest.lua', { encoding: 'utf8' });
 
 const newFileContent = manifestFile.replace(
   /\bversion\("(.*)"\)$/gm,
-  `version '${newVersion}'`,
+  `version("${newVersion}")`,
 );
 
 fs.writeFileSync('fxmanifest.lua', newFileContent);
