@@ -2,7 +2,7 @@ const { build } = require('esbuild');
 const { red, blueBright, yellowBright } = require('colorette');
 
 const isWatchEnabled =
-  process.argv.findIndex((arg) => arg === '--mode=watch') === -1;
+  process.argv.findIndex((arg) => arg === '--mode=watch') !== -1;
 
 function handleRebuild() {
   return (error, result) => {
