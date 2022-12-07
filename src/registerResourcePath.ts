@@ -83,25 +83,31 @@ export function registerResourcePath<
     try {
       switch (data.status) {
         case ResponseStatus.Success:
-          res.json(
-            generateApiResponse(data.responseCode, data.status, data.data),
-          );
+          res
+            .status(data.responseCode)
+            .json(
+              generateApiResponse(data.responseCode, data.status, data.data),
+            );
 
           break;
         case ResponseStatus.Fail:
-          res.json(
-            generateApiResponse(
-              data.responseCode,
-              data.status,
-              data.data as Record<string, string>,
-            ),
-          );
+          res
+            .status(data.responseCode)
+            .json(
+              generateApiResponse(
+                data.responseCode,
+                data.status,
+                data.data as Record<string, string>,
+              ),
+            );
 
           break;
         case ResponseStatus.Error:
-          res.json(
-            generateApiResponse(data.responseCode, data.status, data.message),
-          );
+          res
+            .status(data.responseCode)
+            .json(
+              generateApiResponse(data.responseCode, data.status, data.message),
+            );
 
           break;
       }
