@@ -1,0 +1,39 @@
+name: Create Tagged Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build project
+        run: pnpm run build
+      - name: Bundle files
+        run: |
+          mkdir -p ./temp/wide-api/dist
+          cp ./{LICENSE,README.md,config.json,config.schema.json,fxmanifest.lua} ./temp/wide-api
+          cp -r ./dist ./temp/wide-api/dist
+          zip -r wide-api.zip ./temp/wide-api
+      - name: Create Release
+        uses: 'marvinpinto/action-automatic-releases@latest'
+        with:
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          automatic_release_tag: 'latest'
+          prerelease: false
+          title: 'Wide API Latest'
+          files: ./temp/wide-api.zip
