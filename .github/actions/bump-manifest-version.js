@@ -5,7 +5,7 @@ const newVersion = process.env.TGT_RELEASE_VERSION;
 const manifestFile = fs.readFileSync('fxmanifest.lua', { encoding: 'utf8' });
 
 const newFileContent = manifestFile.replace(
-  /\bversion\s+(.*)$/gm,
+  /\bversion\("(.*)"\)$/gm,
   `version '${newVersion}'`,
 );
 
