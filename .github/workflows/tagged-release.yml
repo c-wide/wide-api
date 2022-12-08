@@ -51,7 +51,7 @@ jobs:
         run: pnpm run build
       - name: Bundle files
         run: |
-          mkdir -p ./temp/wide-api/dist
+          mkdir -p ./temp/wide-api
           cp ./{LICENSE,README.md,config.json,config.schema.json,fxmanifest.lua} ./temp/wide-api
           cp -r ./dist ./temp/wide-api/dist
           cd ./temp && zip -r ../wide-api.zip ./wide-api
