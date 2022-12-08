@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { dynamicRouteRouter } from '~/registerResourcePath';
 import { generateApiResponse, ResponseStatus } from '~/response';
 import { logger } from '~/logger';
@@ -7,9 +8,14 @@ import type { ServerConfig } from '~/getConfig';
 const app = express();
 
 export function startServer(
-  { port, accessKeys }: ServerConfig,
+  { port, enableCors, accessKeys }: ServerConfig,
   defaultPaths: Array<() => void>,
 ) {
+  if (enableCors) {
+    app.use(cors());
+    logger.info('CORS is enabled for all requests.');
+  }
+
   if (accessKeys.length > 0) {
     app.use((req, res, next) => {
       if (!req.headers || !req.headers['x-api-key']) {

@@ -2,6 +2,7 @@
   "$schema": "./config.schema.json",
   "server": {
     "port": 4290,
+    "enableCors": false,
     "accessKeys": []
   },
   "defaultPaths": {

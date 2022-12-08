@@ -7,6 +7,7 @@ export const LoggerLevel = {
 
 export type ServerConfig = {
   port: number;
+  enableCors: boolean;
   accessKeys: Array<{ description: string; key: string }>;
 };
 

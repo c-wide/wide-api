@@ -19,6 +19,11 @@
           "type": "number",
           "default": 4290
         },
+        "enableCors": {
+          "description": "Enable ALL CORS requests",
+          "type": "boolean",
+          "default": false
+        },
         "accessKeys": {
           "description": "Keys that are allowed to query the API (if none provided then keys are not used)",
           "type": "array",
@@ -38,7 +43,7 @@
           }
         }
       },
-      "required": ["port", "accessKeys"]
+      "required": ["port", "enableCors", "accessKeys"]
     },
     "defaultPaths": {
       "description": "Toggle default paths",
