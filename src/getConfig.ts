@@ -1,3 +1,7 @@
+import jsonschema from 'jsonschema';
+import { Logger } from 'tslog';
+import configSchema from '../config.schema.json';
+
 export const LoggerLevel = {
   Debug: 'debug',
   Info: 'info',
@@ -25,6 +29,29 @@ const resourceConfig: ResourceConfig = JSON.parse(
   LoadResourceFile(GetCurrentResourceName(), 'config.json'),
 );
 
-export const getConfig = (): ResourceConfig => {
+export function validateConfig(): boolean {
+  const validatorResponse = new jsonschema.Validator().validate(
+    resourceConfig,
+    configSchema,
+  );
+
+  if (!validatorResponse.valid) {
+    const logger = new Logger({
+      prettyLogTemplate: '[{{dateIsoStr}}] [{{logLevelName}}] - ',
+    });
+
+    logger.fatal(
+      `Invalid config.json detected. Errors: [${validatorResponse.errors.join(
+        ', ',
+      )}]`,
+    );
+
+    return false;
+  }
+
+  return true;
+}
+
+export function getConfig(): ResourceConfig {
   return resourceConfig;
-};
+}
