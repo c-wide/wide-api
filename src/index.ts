@@ -1,19 +1,24 @@
 import { getConfig, validateConfig } from '~/getConfig';
 import { startServer } from '~/startServer';
 import { createEnsureResourcePath } from '~/ensureResource';
+import { compareResourceVersion } from '~/versionChecker';
 
-on('onResourceStart', (resourceName: string) => {
+on('onResourceStart', async (resourceName: string) => {
   if (resourceName === GetCurrentResourceName()) {
     if (!validateConfig()) return;
 
-    const { server, defaultPaths } = getConfig();
+    const config = getConfig();
+
+    if (config.compareVersionOnStart) {
+      await compareResourceVersion();
+    }
 
     const pathArr: Array<() => void> = [];
 
-    if (defaultPaths['ensure-resource']) {
+    if (config.defaultPaths['ensure-resource']) {
       pathArr.push(createEnsureResourcePath);
     }
 
-    startServer(server, pathArr);
+    startServer(config.server, pathArr);
   }
 });

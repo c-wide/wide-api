@@ -23,6 +23,7 @@ export type ResourceConfig = {
   logger: {
     level: typeof LoggerLevel[keyof typeof LoggerLevel];
   };
+  compareVersionOnStart: boolean;
 };
 
 const resourceConfig: ResourceConfig = JSON.parse(

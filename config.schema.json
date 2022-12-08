@@ -69,7 +69,18 @@
         }
       },
       "required": ["level"]
+    },
+    "compareVersionOnStart": {
+      "description": "Toggles version comparison on resource start",
+      "type": "boolean",
+      "default": true
     }
   },
-  "required": ["$schema", "server", "defaultPaths", "logger"]
+  "required": [
+    "$schema",
+    "server",
+    "defaultPaths",
+    "logger",
+    "compareVersionOnStart"
+  ]
 }

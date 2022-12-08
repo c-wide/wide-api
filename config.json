@@ -10,5 +10,6 @@
   },
   "logger": {
     "level": "info"
-  }
+  },
+  "compareVersionOnStart": true
 }
