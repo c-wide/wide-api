@@ -3,7 +3,6 @@ import cors from 'cors';
 import { dynamicRouteRouter } from '~/registerResourcePath';
 import { generateApiResponse, ResponseStatus } from '~/response';
 import { logger } from '~/logger';
-import type { ServerConfig } from '~/getConfig';
 
 const app = express();
 

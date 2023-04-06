@@ -1,7 +1,10 @@
 import express from 'express';
 import { logger } from '~/logger';
-import { generateApiResponse, ResponseStatus } from '~/response';
-import type { ApiResponse } from '~/response';
+import {
+  generateApiResponse,
+  ResponseStatus,
+  type ApiResponse,
+} from '~/response';
 
 export const dynamicRouteRouter = express.Router();
 

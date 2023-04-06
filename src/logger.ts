@@ -1,16 +1,25 @@
 import { Logger } from 'tslog';
-import { getConfig, LoggerLevel } from '~/getConfig';
 
-const level = getConfig().logger.level;
+export const LoggerLevel = {
+  Debug: 'debug',
+  Info: 'info',
+  Warn: 'warn',
+  Error: 'error',
+} as const;
+
+export type LoggerLevels = typeof LoggerLevel[keyof typeof LoggerLevel];
+
+const LoggerLevelMap: Record<LoggerLevels, number> = {
+  debug: 2,
+  info: 3,
+  warn: 4,
+  error: 5,
+};
 
 export const logger = new Logger({
   prettyLogTemplate: '[{{dateIsoStr}}] [{{logLevelName}}] - ',
-  minLevel:
-    level === LoggerLevel.Debug
-      ? 2
-      : level === LoggerLevel.Info
-      ? 3
-      : level === LoggerLevel.Warn
-      ? 4
-      : 5,
 });
+
+export function setLoggerMinLevel(level: LoggerLevels) {
+  logger.settings.minLevel = LoggerLevelMap[level];
+}
