@@ -1,8 +1,7 @@
 import { getConfig, validateConfig } from '~/config';
 import { startServer } from '~/startServer';
-import { createEnsureResourcePath } from '~/ensureResource';
 import { compareResourceVersion } from '~/versionChecker';
-import { logger, setLoggerMinLevel } from './logger';
+import { logger, setLoggerMinLevel } from '~/logger';
 
 on('onResourceStart', async (resourceName: string) => {
   if (resourceName === GetCurrentResourceName()) {
@@ -25,13 +24,6 @@ on('onResourceStart', async (resourceName: string) => {
     }
 
     setLoggerMinLevel(config.logger.level);
-
-    const pathArr: Array<() => void> = [];
-
-    if (config.defaultPaths['ensure-resource']) {
-      pathArr.push(createEnsureResourcePath);
-    }
-
-    startServer(config.server, pathArr);
+    startServer();
   }
 });
