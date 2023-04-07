@@ -80,6 +80,11 @@ export function registerResourcePath<
   path: string,
   handler: (data: T) => Promise<ApiResponse<U> | void> | ApiResponse<U> | void,
 ) {
+  if (typeof path !== 'string' || typeof handler !== 'function') {
+    logger.error('Invalid arguments passed to registerResourcePath.');
+    return;
+  }
+
   const resourceName = GetInvokingResource() || GetCurrentResourceName();
 
   if (!resourcePathMap.has(resourceName)) {
