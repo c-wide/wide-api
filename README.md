@@ -1,31 +1,61 @@
-# Wide API
+<div align="center">
 
-## Description
+# 🌐 Wide API
 
-A resource for FiveM that provides an API to execute functions on the server.
+**A FiveM resource that provides an API to execute functions on the server.**
 
-### Getting Started
+</div>
 
-1. Download & unpack the release files.
-2. Place the folder in your servers resources folder.
-3. Edit the config.json file if desired.
-4. Start the resource.
+## 📚 Table of Contents
 
-Note: All paths are prefixed with the name of the resource that registered it. (/wide-api/ensure-resource/)
+- [Getting Started](#-getting-started)
+- [Register Your Own Paths](#-register-your-own-paths)
+  - [Examples](#examples)
+- [Resource Restarter](#-resource-restarter)
+- [Handling Resource Restarts](#-handling-resource-restarts)
+- [Access Keys](#-access-keys)
+- [Caveats](#-caveats)
+- [Acknowledgements](#-acknowledgements)
 
-### Register your own paths
+## 🚀 Getting Started
 
-- This resource exposes one export:
+1. **Download** and unpack the release files.
+2. **Place** the folder in your server's `resources` folder.
+3. **Edit** the `config.json` file according to your preferences.
+4. **Start** the resource.
 
+## 🛠 Register Your Own Paths
+
+This resource exposes a single export. Your route handler can return any data you want or a custom ApiResponse. See [Caveats](#-caveats) below.
+
+```javascript
+registerResourcePath(path: string, handler: (queryParams: Record<string, string>) => ApiResponse | unknown)
 ```
-registerResourcePath(path: string, handler: (queryParams: Record<string, string>) => ApiResponse | void)
+
+### Examples
+
+- **Lua** (use the colon operator, not the dot operator)
+
+```lua
+exports["wide-api"]:registerResourcePath("yourPathName", function(queryParams)
+
+end)
 ```
 
-### Resource restarter
+- **JavaScript** (queryParams type is `Record<string, string>`)
 
-- To use the 'ensure-resource' path, make sure it is enabled in the config.json file.
-- This path accepts one query parameter "resourceName". (/wide-api/ensure-resource?resourceName=baseevents/)
-- If using this path the resource will require the permission to use the "ensure", "start", and "stop" commands.
+```javascript
+globalThis.exports['wide-api'].registerResourcePath(
+  'yourPathName',
+  (queryParams) => {},
+);
+```
+
+## 🔁 Resource Restarter
+
+- Enable the 'ensure-resource' path in the `config.json` file.
+- This path accepts one query parameter: `resourceName` (e.g. `/wide-api/ensure-resource?resourceName=baseevents/`).
+- If using this path, the resource will require permission to use the "ensure", "start", and "stop" commands.
 
 ```
 add_ace resource.wide-api command.ensure allow
@@ -33,19 +63,19 @@ add_ace resource.wide-api command.start allow
 add_ace resource.wide-api command.stop allow
 ```
 
-### Handling resource restarts
+## 🔄 Handling Resource Restarts
 
-- When the API starts listening the 'wide-api:startServer' command is triggered.
-- When creating your own paths you can listen for this event and re-register any paths you've created.
+- When the API starts listening, the 'wide-api:startServer' command is triggered.
+- To handle resource restarts, listen for this event and re-register any paths you've created.
 
-### Access Keys
+## 🔑 Access Keys
 
-- Access keys should be added in the config.json file.
+- Access keys should be added in the `config.json` file.
 - If no access keys are provided, the server listens with unrestricted access.
-- If you do provide access keys then you must provide an access key in the 'x-api-key' header.
+- When access keys are specified, make sure to include an access key in the 'x-api-key' header for requests.
 - Access keys should be added in the format: { description: string, key: string }
 
-### Acknowledgements
+## ⚠️ Caveats
 
-- [AvarianKnight](https://github.com/AvarianKnight) for the idea and rough draft.
-- [Project Error](https://github.com/project-error) for the version checker & build detector.
+- All paths are prefixed with the name of the resource that registered it (e.g., /wide-api/ensure-resource/).
+- If your route handler does not return an object/table that matches the ApiResponse type, the API assumes a response code of 200 and provides your returned data on the "data" key of the API response. Check the [ApiResponse type](https://github.com/c-wide/wide-api/blob/acbee784552da106dc45106b058cb9cffde6d95b/src/response.ts#L25) for more details.
