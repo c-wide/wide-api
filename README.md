@@ -14,7 +14,7 @@
 - [Resource Restarter](#-resource-restarter)
 - [Handling Resource Restarts](#-handling-resource-restarts)
 - [Access Keys](#-access-keys)
-- [Caveats](#-caveats)
+- [Caveats](#caveats)
 - [Acknowledgements](#-acknowledgements)
 
 ## 🚀 Getting Started
@@ -79,3 +79,8 @@ add_ace resource.wide-api command.stop allow
 
 - All paths are prefixed with the name of the resource that registered it (e.g., /wide-api/ensure-resource/).
 - If your route handler does not return an object/table that matches the ApiResponse type, the API assumes a response code of 200 and provides your returned data on the "data" key of the API response. Check the [ApiResponse type](https://github.com/c-wide/wide-api/blob/acbee784552da106dc45106b058cb9cffde6d95b/src/response.ts#L25) for more details.
+
+## 🙌 Acknowledgements
+
+- [AvarianKnight](https://github.com/AvarianKnight) for the idea and rough draft.
+- [Project Error](https://github.com/project-error) for the version checker and build detector.
