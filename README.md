@@ -48,3 +48,4 @@ add_ace resource.wide-api command.stop allow
 ### Acknowledgements
 
 - [AvarianKnight](https://github.com/AvarianKnight) for the idea and rough draft.
+- [Project Error](https://github.com/project-error) for the version checker & build detector.
