@@ -4,6 +4,7 @@ import {
   generateApiResponse,
   ResponseStatus,
   type ApiResponse,
+  isApiResponse,
 } from '~/response';
 
 export const dynamicRouteRouter = express.Router();
@@ -14,50 +15,23 @@ const resourcePathMap = new Map<
     string,
     (
       data: Record<string, unknown>,
-    ) => Promise<ApiResponse | void> | ApiResponse | void
+    ) => Promise<ApiResponse | unknown> | ApiResponse | unknown
   >
 >();
 
 function handlePathFuncResult(
-  data: ApiResponse | void,
+  data: ApiResponse | unknown,
   res: express.Response,
   resourceName: string,
   path: string,
 ) {
-  if (!data) {
-    res.json(generateApiResponse(200, ResponseStatus.Success));
+  if (!data || !isApiResponse(data)) {
+    res.json(generateApiResponse(200, ResponseStatus.Success, data));
     return;
   }
 
   try {
-    switch (data.status) {
-      case ResponseStatus.Success:
-        res
-          .status(data.responseCode)
-          .json(generateApiResponse(data.responseCode, data.status, data.data));
-
-        break;
-      case ResponseStatus.Fail:
-        res
-          .status(data.responseCode)
-          .json(
-            generateApiResponse(
-              data.responseCode,
-              data.status,
-              data.data as Record<string, string>,
-            ),
-          );
-
-        break;
-      case ResponseStatus.Error:
-        res
-          .status(data.responseCode)
-          .json(
-            generateApiResponse(data.responseCode, data.status, data.message),
-          );
-
-        break;
-    }
+    res.status(data.responseCode).json(data);
   } catch (err) {
     const response = generateApiResponse(
       500,
