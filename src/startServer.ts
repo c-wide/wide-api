@@ -3,14 +3,14 @@ import cors from 'cors';
 import { dynamicRouteRouter } from '~/registerResourcePath';
 import { generateApiResponse, ResponseStatus } from '~/response';
 import { logger } from '~/logger';
-import type { ServerConfig } from '~/getConfig';
+import { getConfig } from '~/config';
+import { registerDefaultPaths } from '~/registerDefaultPaths';
 
 const app = express();
 
-export function startServer(
-  { port, enableCors, accessKeys }: ServerConfig,
-  defaultPaths: Array<() => void>,
-) {
+export function startServer() {
+  const { enableCors, accessKeys, port } = getConfig().server;
+
   if (enableCors) {
     app.use(cors());
     logger.info('CORS is enabled for all requests.');
@@ -64,11 +64,7 @@ export function startServer(
 
   app.listen(port, () => {
     logger.info(`API listening on http://127.0.0.1:${port}/`);
-
+    registerDefaultPaths();
     emit(`${GetCurrentResourceName()}:serverStarted`);
-
-    defaultPaths.forEach((createPath) => {
-      createPath();
-    });
   });
 }

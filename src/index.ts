@@ -1,11 +1,21 @@
-import { getConfig, validateConfig } from '~/getConfig';
+import { getConfig, validateConfig } from '~/config';
 import { startServer } from '~/startServer';
-import { createEnsureResourcePath } from '~/ensureResource';
 import { compareResourceVersion } from '~/versionChecker';
+import { logger, setLoggerMinLevel } from '~/logger';
 
 on('onResourceStart', async (resourceName: string) => {
   if (resourceName === GetCurrentResourceName()) {
-    if (!validateConfig()) return;
+    const validationResult = validateConfig();
+
+    if (validationResult.status !== 'success') {
+      logger.fatal(
+        `Invalid config.json detected. Errors: [${validationResult.errors.join(
+          ', ',
+        )}]`,
+      );
+
+      return;
+    }
 
     const config = getConfig();
 
@@ -13,12 +23,7 @@ on('onResourceStart', async (resourceName: string) => {
       await compareResourceVersion();
     }
 
-    const pathArr: Array<() => void> = [];
-
-    if (config.defaultPaths['ensure-resource']) {
-      pathArr.push(createEnsureResourcePath);
-    }
-
-    startServer(config.server, pathArr);
+    setLoggerMinLevel(config.logger.level);
+    startServer();
   }
 });

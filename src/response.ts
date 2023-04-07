@@ -80,3 +80,17 @@ export function generateApiResponse(
 
   throw new Error('Error generating API response.');
 }
+
+const ResponseStatuses = Object.values(ResponseStatus) as Array<string>;
+
+export function isApiResponse(data: unknown): data is ApiResponse {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'responseCode' in data &&
+    typeof data.responseCode === 'number' &&
+    'status' in data &&
+    typeof data.status === 'string' &&
+    ResponseStatuses.includes(data.status)
+  );
+}

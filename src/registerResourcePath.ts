@@ -1,18 +1,51 @@
 import express from 'express';
 import { logger } from '~/logger';
-import { generateApiResponse, ResponseStatus } from '~/response';
-import type { ApiResponse } from '~/response';
+import {
+  generateApiResponse,
+  ResponseStatus,
+  type ApiResponse,
+  isApiResponse,
+} from '~/response';
 
 export const dynamicRouteRouter = express.Router();
 
 const resourcePathMap = new Map<
   string,
-  {
-    [key: string]: (
+  Record<
+    string,
+    (
       data: Record<string, unknown>,
-    ) => Promise<ApiResponse | void> | ApiResponse | void;
-  }
+    ) => Promise<ApiResponse | unknown> | ApiResponse | unknown
+  >
 >();
+
+function handlePathFuncResult(
+  data: ApiResponse | unknown,
+  res: express.Response,
+  resourceName: string,
+  path: string,
+) {
+  if (!data || !isApiResponse(data)) {
+    res.json(generateApiResponse(200, ResponseStatus.Success, data));
+    return;
+  }
+
+  try {
+    res.status(data.responseCode).json(data);
+  } catch (err) {
+    const response = generateApiResponse(
+      500,
+      ResponseStatus.Error,
+      `Endpoint '${resourceName}/${path}' tried to send data that wasn't JSON compatible.`,
+    );
+
+    res.status(response.responseCode).send(response);
+
+    logger.error(response.message);
+
+    return;
+  }
+}
 
 export function registerResourcePath<
   T extends Record<string, unknown> = Record<string, unknown>,
@@ -21,6 +54,11 @@ export function registerResourcePath<
   path: string,
   handler: (data: T) => Promise<ApiResponse<U> | void> | ApiResponse<U> | void,
 ) {
+  if (typeof path !== 'string' || typeof handler !== 'function') {
+    logger.error('Invalid arguments passed to registerResourcePath.');
+    return;
+  }
+
   const resourceName = GetInvokingResource() || GetCurrentResourceName();
 
   if (!resourcePathMap.has(resourceName)) {
@@ -36,7 +74,7 @@ export function registerResourcePath<
     resourcePathMap.set(resourceName, { ...resourcePaths, [path]: handler });
   }
 
-  dynamicRouteRouter.get(`/${resourceName}/${path}`, async (req, res) => {
+  dynamicRouteRouter.get(`/${resourceName}/${path}`, (req, res) => {
     if (
       !resourcePathMap.has(resourceName) ||
       !resourcePathMap.get(resourceName)?.[path]
@@ -57,65 +95,23 @@ export function registerResourcePath<
     const pathFunc = resourcePathMap.get(resourceName)?.[path];
     if (!pathFunc) return;
 
-    let data: Awaited<ReturnType<typeof pathFunc>>;
-
     try {
-      data = await pathFunc(req.query);
+      const result = pathFunc(req.query);
+
+      if (result instanceof Promise) {
+        return result.then((data) => {
+          handlePathFuncResult(data, res, resourceName, path);
+        });
+      }
+
+      handlePathFuncResult(result, res, resourceName, path);
+
+      return;
     } catch (err) {
       const response = generateApiResponse(
         500,
         ResponseStatus.Error,
         `Callback is invalid for endpoint '${resourceName}/${path}', the target resource was most likely stopped.`,
-      );
-
-      res.status(response.responseCode).send(response);
-
-      logger.error(response.message);
-
-      return;
-    }
-
-    if (!data) {
-      res.json(generateApiResponse(200, ResponseStatus.Success));
-      return;
-    }
-
-    try {
-      switch (data.status) {
-        case ResponseStatus.Success:
-          res
-            .status(data.responseCode)
-            .json(
-              generateApiResponse(data.responseCode, data.status, data.data),
-            );
-
-          break;
-        case ResponseStatus.Fail:
-          res
-            .status(data.responseCode)
-            .json(
-              generateApiResponse(
-                data.responseCode,
-                data.status,
-                data.data as Record<string, string>,
-              ),
-            );
-
-          break;
-        case ResponseStatus.Error:
-          res
-            .status(data.responseCode)
-            .json(
-              generateApiResponse(data.responseCode, data.status, data.message),
-            );
-
-          break;
-      }
-    } catch (err) {
-      const response = generateApiResponse(
-        500,
-        ResponseStatus.Error,
-        `Endpoint '${resourceName}/${path}' tried to send data that wasn't JSON compatible.`,
       );
 
       res.status(response.responseCode).send(response);
@@ -130,3 +126,24 @@ export function registerResourcePath<
 }
 
 global.exports('registerResourcePath', registerResourcePath);
+
+on('onResourceStop', (resourceName: string) => {
+  if (resourceName === GetCurrentResourceName()) return;
+
+  if (resourcePathMap.has(resourceName)) {
+    const pathData = resourcePathMap.get(resourceName);
+    if (!pathData) return;
+
+    const paths = Object.keys(pathData).map(
+      (path) => `/${resourceName}/${path}`,
+    );
+
+    dynamicRouteRouter.stack = dynamicRouteRouter.stack.filter(
+      (route) => !paths.includes(route.route?.path ?? ''),
+    );
+
+    resourcePathMap.delete(resourceName);
+
+    logger.info(`Resource '${resourceName}' was stopped, removed all paths.`);
+  }
+});
